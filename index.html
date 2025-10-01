@@ -3,71 +3,92 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Calcolatore Longevità — v2 (by Stephan Winckler)</title>
+<title>Calcolatore Longevità — v3 (by Stephan Winckler)</title>
 <style>
   :root{
     --bg:#0f172a; --panel:#0b1220; --muted:#94a3b8; --text:#e5e7eb;
     --accent:#38bdf8; --accent2:#22c55e; --danger:#ef4444; --warn:#f59e0b; --ok:#10b981;
     --b:#1f2937; --card:#0b1424;
   }
+  /* Tema chiaro */
+  :root.light{
+    --bg:#f5f7fb; --panel:#ffffff; --muted:#475569; --text:#0f172a;
+    --accent:#0284c7; --accent2:#16a34a; --danger:#dc2626; --warn:#d97706; --ok:#059669;
+    --b:#e2e8f0; --card:#ffffff;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0; height:100%; background:#0e1426; color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif}
+  html,body{margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif}
   header{
     position:sticky; top:0; z-index:30;
     background:rgba(12,18,34,.9); backdrop-filter:saturate(140%) blur(6px);
     border-bottom:1px solid var(--b);
   }
-  .h-wrap{max-width:1100px; margin:0 auto; padding:10px 16px env(safe-area-inset-top) 16px}
-  h1{margin:4px 0 8px; font-size:clamp(18px,4vw,24px)}
+  :root.light header{background:rgba(255,255,255,.85)}
+  .h-wrap{max-width:1100px; margin:0 auto; padding:10px 16px calc(10px + env(safe-area-inset-top)) 16px; display:flex; gap:10px; align-items:center}
+  h1{margin:4px 0 8px; font-size:clamp(18px,4vw,24px); flex:1}
   .muted{color:var(--muted)}
   .progress{height:8px; width:100%; background:#0a1222; border:1px solid var(--b); border-radius:999px; overflow:hidden}
+  :root.light .progress{background:#eef2f7}
   .bar{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),#60a5fa,var(--accent2)); transition:width .3s}
 
   .container{max-width:1100px; margin:10px auto 96px; padding:0 12px}
   .panel{
-    background:linear-gradient(180deg,#0e172d, #0b1220); border:1px solid var(--b);
-    border-radius:14px; padding:14px; margin:10px 0; box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03)
+    background:linear-gradient(180deg, var(--panel), var(--panel));
+    border:1px solid var(--b); border-radius:14px; padding:14px; margin:10px 0;
+    box-shadow:0 10px 30px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.03)
   }
-  .section-title{margin:0 0 8px; font-size:16px; color:#c7d2fe}
+  .section-title{margin:0 0 8px; font-size:16px; color:#4f9cff}
+  :root.light .section-title{color:#0ea5e9}
   .row{display:flex; gap:10px; flex-wrap:wrap}
   .col{flex:1 1 240px; min-width:210px}
   label{display:block; font-size:13px; color:var(--muted); margin:6px 0}
   input, select, textarea{
     width:100%; padding:11px 12px; border-radius:12px; background:#0a1222; border:1px solid var(--b); color:var(--text);
-    font-size:16px; /* mobile-friendly */ outline:none
+    font-size:16px; outline:none
   }
+  :root.light input,:root.light select,:root.light textarea{background:#ffffff}
   input:focus, select:focus, textarea:focus{border-color:var(--accent)}
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 16px; border-radius:12px; background:linear-gradient(180deg,#0ea5e9,#0284c7); border:1px solid #0369a1; color:#fff; font-weight:600}
-  .btn.secondary{background:#101826}
-  .btn.ghost{background:transparent; border:1px dashed #334155; color:#cbd5e1}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 16px; border-radius:12px; background:linear-gradient(180deg,var(--accent),#0284c7); border:1px solid #0369a1; color:#fff; font-weight:600; cursor:pointer}
+  .btn.secondary{background:#101826; border-color:var(--b)}
+  :root.light .btn.secondary{background:#ffffff}
+  .btn.ghost{background:transparent; border:1px dashed #334155; color:var(--text)}
   .btn.small{padding:8px 10px; font-size:13px; border-radius:10px}
+  .btn.inline{padding:6px 10px; font-size:12px}
   .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px}
   .card{background:var(--card); border:1px solid var(--b); border-radius:12px; padding:12px}
+  :root.light .card{background:#fff}
   .badge,.pill,.chip{display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; border:1px solid var(--b); font-size:12px}
   .pill{background:#0b1a2e; color:#a5b4fc}
-  .chip{background:#0b1a2e}
-  .mini{font-size:12px; color:#9ca3af}
-  .helper{font-size:12px; color:#9ca3af; margin-top:6px}
+  :root.light .pill{background:#eaf4ff; color:#2563eb}
+  .chip{background:#0b1a2e} :root.light .chip{background:#f1f5f9}
+  .mini{font-size:12px; color:var(--muted)}
+  .helper{font-size:12px; color:var(--muted); margin-top:6px}
   .table{width:100%; border-collapse:collapse}
   .table th,.table td{border-bottom:1px solid var(--b); padding:8px; text-align:left; font-size:14px}
   .ok{color:var(--ok)} .warn{color:var(--warn)} .danger{color:var(--danger)}
 
-  /* Mobile footer controls */
   .foot-nav{
     position:fixed; left:0; right:0; bottom:0; z-index:40;
     background:rgba(8,12,24,.95); border-top:1px solid var(--b);
     padding:8px 12px calc(8px + env(safe-area-inset-bottom));
     display:flex; gap:8px
   }
+  :root.light .foot-nav{background:rgba(255,255,255,.95)}
   .foot-nav .btn{flex:1 1 50%}
   footer.legal{
-    margin:20px auto; max-width:1100px; color:var(--muted); font-size:12px; padding:0 12px 80px; /* padding for foot-nav overlap */
+    margin:20px auto; max-width:1100px; color:var(--muted); font-size:12px; padding:0 12px 80px;
+  }
+  @media (max-width:480px){
+    .h-wrap{padding:8px 12px calc(8px + env(safe-area-inset-top)) 12px}
+    .container{margin-top:6px}
   }
 
-  /* Reduce top density on very small screens */
-  @media (max-width:480px){
-    .h-wrap{padding:8px 12px env(safe-area-inset-top) 12px}
-    .container{margin-top:6px}
+  /* Sezione stampabile (report) */
+  @media print{
+    header,.foot-nav, .no-print{display:none!important}
+    body{background:#fff; color:#000}
+    .panel{box-shadow:none; border:0; padding:0}
+    .container{margin:0; max-width:100%}
   }
 </style>
 </head>
@@ -75,13 +96,17 @@
   <header>
     <div class="h-wrap">
       <h1>Calcolatore di Longevità <span class="muted">— stima ludica & motivazionale</span></h1>
+      <button id="themeToggle" class="btn inline no-print" title="Tema chiaro/scuro">🌓</button>
+      <button id="installBtn" class="btn inline no-print" title="Aggiungi alla Home">📲</button>
+    </div>
+    <div class="h-wrap" style="padding-top:0">
       <div class="progress"><div id="bar" class="bar"></div></div>
     </div>
   </header>
 
   <div class="container" id="app">
 
-    <!-- STEP 1: ANAGRAFICA + AMBIENTE + TRASFERIMENTO -->
+    <!-- STEP 1 -->
     <section class="panel step-panel" data-step="1">
       <h2 class="section-title">1) Dati anagrafici</h2>
       <div class="row">
@@ -107,9 +132,14 @@
         <div class="col"><label>Paese di trasferimento (ipotetico)</label><select id="paeseFuturo"></select></div>
         <div class="col"><label>Anno previsto (indicativo)</label><input id="annoFuturo" type="number" min="2025" max="2100" placeholder="Es. 2030"></div>
       </div>
+      <div class="row no-print" style="gap:6px;margin-top:6px">
+        <button id="exportJSON" class="btn ghost small">💾 Esporta JSON</button>
+        <label class="btn ghost small" for="importJSON">📥 Importa JSON</label>
+        <input id="importJSON" type="file" accept="application/json" style="display:none">
+      </div>
     </section>
 
-    <!-- STEP 2: PAESI VISSUTI -->
+    <!-- STEP 2 -->
     <section class="panel step-panel" data-step="2" hidden>
       <h2 class="section-title">2) Dove hai vissuto (timeline)</h2>
       <div class="row">
@@ -121,7 +151,7 @@
       <div id="timelineList" class="cards"></div>
     </section>
 
-    <!-- STEP 3: STILE DI VITA, BMI, FUMO, ALCOL, ZUCCHERATE -->
+    <!-- STEP 3 -->
     <section class="panel step-panel" data-step="3" hidden>
       <h2 class="section-title">3) Stile di vita</h2>
       <div class="row">
@@ -178,10 +208,11 @@
           <div class="col" style="min-width:160px"><label>&nbsp;</label><button class="btn ghost" id="addPastBMI">Aggiungi BMI passato</button></div>
         </div>
         <div id="pastBMIList" class="cards" style="margin-top:6px"></div>
+        <canvas id="bmiChart" height="160" style="margin-top:10px;width:100%;background:transparent;border:1px dashed var(--b);border-radius:8px"></canvas>
       </div>
     </section>
 
-    <!-- STEP 4: LAVORO + REDDITO + PASTI -->
+    <!-- STEP 4 -->
     <section class="panel step-panel" data-step="4" hidden>
       <h2 class="section-title">4) Lavoro, reddito & pasti</h2>
       <div class="row">
@@ -204,10 +235,10 @@
           </select>
         </div>
       </div>
-      <div class="helper">Il lavoro incide per esposizioni (polveri, solventi, rumore, turni, vibrazioni), il reddito come proxy di accesso a cura/prevenzione e stress finanziario.</div>
+      <div class="helper">Il lavoro incide per esposizioni (polveri, solventi, rumore, turni, vibrazioni), il reddito come proxy di accesso a prevenzione e stress finanziario.</div>
     </section>
 
-    <!-- STEP 5: INCIDENTI + MALATTIE -->
+    <!-- STEP 5 -->
     <section class="panel step-panel" data-step="5" hidden>
       <h2 class="section-title">5) Incidenti & Patologie</h2>
       <div class="card">
@@ -224,7 +255,7 @@
       <hr>
 
       <div class="card">
-        <div class="mini"><strong>Patologie</strong> — parte del corpo → categoria → dettaglio (come v1, database ampliato).</div>
+        <div class="mini"><strong>Patologie</strong> — parte del corpo → categoria → dettaglio.</div>
         <div class="row" style="margin-top:6px">
           <div class="col"><label>Parte del corpo</label><select id="bodyPart"></select></div>
           <div class="col"><label>Categoria</label><select id="diseaseCat"></select></div>
@@ -235,7 +266,7 @@
       </div>
     </section>
 
-    <!-- STEP 6: SESSO FEMMINILE (PARTI) + STRESS + DROGHE -->
+    <!-- STEP 6 -->
     <section class="panel step-panel" data-step="6" hidden>
       <h2 class="section-title">6) Fattori aggiuntivi</h2>
       <div class="card" id="femaleBox" style="display:none">
@@ -272,7 +303,7 @@
       </div>
 
       <div class="card">
-        <div class="mini"><strong>Droghe</strong> — <span class="ok">Questi dati non vengono salvati da nessuna parte</span>: servono solo per calcolare un punteggio aggregato locale sul tuo dispositivo.</div>
+        <div class="mini"><strong>Droghe</strong> — <span class="ok">Questi dati non vengono salvati da nessuna parte</span>: servono solo per un punteggio aggregato locale.</div>
         <div class="row" style="margin-top:6px">
           <div class="col"><label>Uso di droghe?</label>
             <select id="drogheUso"><option value="no">No</option><option value="si">Sì</option></select>
@@ -292,15 +323,17 @@
       </div>
     </section>
 
-    <!-- STEP 7: RIEPILOGO + CALCOLO -->
+    <!-- STEP 7 -->
     <section class="panel step-panel" data-step="7" hidden>
       <h2 class="section-title">7) Riepilogo</h2>
       <div id="summaryCards" class="cards"></div>
       <div class="helper">Controlla i dati. Se qualcosa non torna, torna indietro e correggi. Poi avvia il calcolo.</div>
-      <div class="row" style="margin-top:8px"><button class="btn" id="doCalc">Avvia calcolo</button></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" id="doCalc">Avvia calcolo</button>
+      </div>
     </section>
 
-    <!-- STEP 8: RISULTATO -->
+    <!-- STEP 8 -->
     <section class="panel step-panel" data-step="8" hidden>
       <h2 class="section-title">Risultato & Probabilità traguardi</h2>
       <div id="resultHead" style="font-size:clamp(22px,5vw,34px); font-weight:800"></div>
@@ -319,15 +352,17 @@
       <div class="card" style="margin-top:8px">
         <div class="mini"><strong>Consigli personalizzati</strong></div>
         <ul id="tips" class="list" style="margin-top:6px"></ul>
+        <div id="potentialGain" class="helper" style="margin-top:6px"></div>
       </div>
       <div class="row" style="margin-top:10px">
         <button class="btn secondary" id="ricomincia">Ricomincia</button>
+        <button class="btn" id="exportReport">📄 Esporta/Salva</button>
       </div>
     </section>
   </div>
 
   <!-- Mobile nav -->
-  <div class="foot-nav">
+  <div class="foot-nav no-print">
     <button class="btn secondary" id="backBtn">Indietro</button>
     <button class="btn" id="nextBtn">Avanti</button>
   </div>
@@ -338,6 +373,48 @@
   </footer>
 
 <script>
+/* ====== Tema ====== */
+const root = document.documentElement;
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  root.classList.toggle('light');
+  localStorage.setItem('theme', root.classList.contains('light')?'light':'dark');
+});
+if(localStorage.getItem('theme')==='light'){ root.classList.add('light'); }
+
+/* ====== PWA (manifest + service worker via Blob) ====== */
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredPrompt=e; });
+document.getElementById('installBtn').addEventListener('click', async ()=>{
+  if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt=null; }
+  else alert("Se il pulsante non appare, usa 'Aggiungi alla schermata Home' dal menu del browser.");
+});
+(function setupPWA(){
+  const manifest = {
+    name:"Calcolatore Longevità",
+    short_name:"Longevità",
+    start_url:"./",
+    display:"standalone",
+    background_color:"#0f172a",
+    theme_color:"#0f172a",
+    icons:[]
+  };
+  const manURL = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/json'}));
+  const link=document.createElement('link'); link.rel='manifest'; link.href=manURL; document.head.appendChild(link);
+
+  const swCode = `
+    self.addEventListener('install', e=>{
+      e.waitUntil(caches.open('longevita-v3').then(c=>c.addAll(['./'])));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e=>{ e.waitUntil(self.clients.claim()); });
+    self.addEventListener('fetch', e=>{
+      e.respondWith(caches.match(e.request).then(r=> r || fetch(e.request)));
+    });
+  `;
+  const swURL = URL.createObjectURL(new Blob([swCode], {type:'text/javascript'}));
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register(swURL); }
+})();
+
 /* ===== Dataset: Aspettative di vita (indicativo) ===== */
 const LIFE_EXP = {
  "Italia":83,"San Marino":84,"Spagna":83,"Francia":82,"Svizzera":84,"Germania":81,"Austria":82,"Regno Unito":81,
@@ -352,7 +429,7 @@ const LIFE_EXP = {
 };
 const COUNTRIES = Object.keys(LIFE_EXP).sort((a,b)=>a.localeCompare(b,'it'));
 
-/* ===== Lavori e fattori di rischio (anni +/- cumulativi) ===== */
+/* ===== Lavori e fattori (anni +/-) ===== */
 const JOBS = {
   "Ufficio/Impiegato sedentario": {years:-0.5, notes:["Sedentarietà"], expo:{sedent:true}},
   "IT/Programmatore": {years:-0.5, notes:["Sedentarietà/occhi"], expo:{sedent:true}},
@@ -369,10 +446,12 @@ const JOBS = {
   "Logistica/Magazzino pesante": {years:-1.0, notes:["Sforzo","vibrazioni"], expo:{phys:true,vib:true}},
   "Subacqueo/Alta quota": {years:-1.4, notes:["Pressione/altitudine"], expo:{pressure:true}},
   "Insegnante": {years:-0.2, notes:["Stress moderato"], expo:{stress:true}},
-  "Commercio/Negozio": {years:-0.2, notes:["In piedi"], expo:{phys:true}}
+  "Commercio/Negozio": {years:-0.2, notes:["In piedi"], expo:{phys:true}},
+  "Disoccupato": {years:-0.8, notes:["Stress economico, inattività"], expo:{stress:true,sedent:true}},
+  "Studente": {years:-0.4, notes:["Stress esami, sedentarietà"], expo:{stress:true,sedent:true}}
 };
 
-/* ===== Malattie (ampliato; punteggi negativi) ===== */
+/* ===== Malattie (punteggi negativi) ===== */
 const DISEASES = {
  "Cardio-vascolare":{
    "Ipertensione":{"Lieve":-4,"Moderata":-8,"Grave":-12},
@@ -436,9 +515,7 @@ const DRUGS = {
 };
 
 /* ===== Stato ===== */
-const S = {
-  step:1, timeline:[], pastBMI:[], diseases:[], incidents:[], drugs:[], inferred:[]
-};
+const S = { step:1, timeline:[], pastBMI:[], diseases:[], incidents:[], drugs:[], inferred:[], minorWarn:false, childAttempts:0 };
 
 const el = s=>document.querySelector(s);
 const els = s=>document.querySelectorAll(s);
@@ -446,13 +523,13 @@ const els = s=>document.querySelectorAll(s);
 /* ===== Init selects ===== */
 function fillCountry(sel){ sel.innerHTML = COUNTRIES.map(c=>`<option>${c}</option>`).join(''); }
 ["residenza","paeseFuturo","paeseTimeline"].forEach(id=>fillCountry(el("#"+id)));
-
 function fillJobs(){
   const sel = el("#lavoroTipo");
   sel.innerHTML = Object.keys(JOBS).map(j=>`<option>${j}</option>`).join('');
 }
 fillJobs();
 
+/* Diseases/Incidents/Drugs init */
 function initDiseaseSelectors(){
   const partSel = el("#bodyPart");
   partSel.innerHTML = Object.keys(DISEASES).map(p=>`<option>${p}</option>`).join('');
@@ -493,36 +570,75 @@ function initDrugs(){
 }
 initDrugs();
 
-/* ===== UI helpers ===== */
+/* ===== Step/UI ===== */
 function showStep(n){
+  if(!canProceedToStep(n)) return;
   S.step=n;
   els(".step-panel").forEach(p=>p.hidden=true);
   document.querySelector(`.step-panel[data-step="${n}"]`).hidden=false;
   const pct = ((n-1)/(8-1))*100;
   el("#bar").style.width = pct+"%";
-  // se donna, mostra box parti allo step 6
-  const isF = el("#sesso").value==="F";
-  el("#femaleBox").style.display = isF ? "" : "none";
-  // summary autogenerato a step 7
+  el("#femaleBox").style.display = el("#sesso").value==="F" ? "" : "none";
+  if(n===3) drawBMIChart();
   if(n===7) buildSummary();
 }
-function next(){ if(S.step<8) showStep(S.step+1); }
-function back(){ if(S.step>1) showStep(S.step-1); }
+function next(){ showStep(S.step+1); scrollTopPanel(); }
+function back(){ showStep(S.step-1); scrollTopPanel(); }
 el("#nextBtn").addEventListener("click", next);
 el("#backBtn").addEventListener("click", back);
+function scrollTopPanel(){ document.querySelector(`.step-panel[data-step="${S.step}"]`)?.scrollIntoView({behavior:"smooth",block:"start"}); }
 
-/* ===== Interazioni ===== */
 el("#trasferFuturo").addEventListener("change", e=>{
   el("#futuroBox").style.display = e.target.value==="si" ? "" : "none";
 });
 document.addEventListener("keydown",(e)=>{ if(e.key==="Enter") next(); });
 
-/* Timeline */
+/* ===== DOB checks ===== */
+function ageFromDOB(dateStr){
+  if(!dateStr) return 40;
+  const dob = new Date(dateStr), t=new Date();
+  let a = t.getFullYear()-dob.getFullYear();
+  const m=t.getMonth()-dob.getMonth();
+  if(m<0 || (m===0 && t.getDate()<dob.getDate())) a--;
+  return Math.max(0,a);
+}
+function isDOBImprobabile(dateStr){
+  if(!dateStr) return false;
+  const d=new Date(dateStr); const now=new Date();
+  const year=d.getFullYear(), cy=now.getFullYear();
+  const age=ageFromDOB(dateStr);
+  return (year<1900 || year>cy || age>120);
+}
+function canProceedToStep(n){
+  if(S.step===1 && n>1){
+    const dob=el("#dob").value;
+    if(!dob){
+      if(!confirm("Data di nascita non inserita: continuerò assumendo 40 anni. Va bene?")) return false;
+    } else {
+      const age = ageFromDOB(dob);
+      if(isDOBImprobabile(dob)){
+        if(!confirm("La data di nascita sembra improbabile. Vuoi davvero continuare?")) return false;
+      }
+      if(age<13){
+        S.childAttempts++;
+        const msg = S.childAttempts<3
+          ? "Ehi, sei solo un bambino! Sei sicuro di voler andare avanti?"
+          : "Ultimo avviso: questo strumento è pensato per adulti. Procedere comunque?";
+        if(!confirm(msg)) return false;
+      } else if(age<18 && !S.minorWarn){
+        if(!confirm("Avvertenza: questo calcolatore è pensato per adulti. Vuoi continuare?")) return false;
+        S.minorWarn=true;
+      }
+    }
+  }
+  return true;
+}
+
+/* ===== Timeline ===== */
 el("#addTimeline").addEventListener("click", ()=>{
   const paese=el("#paeseTimeline").value, dal=+el("#dalAnno").value, al=+el("#alAnno").value;
   if(!paese||!dal||!al||al<dal){ alert("Controlla gli anni."); return; }
-  S.timeline.push({paese, dal, al});
-  renderTimeline();
+  S.timeline.push({paese, dal, al}); renderTimeline();
 });
 function renderTimeline(){
   const box=el("#timelineList");
@@ -538,19 +654,20 @@ function renderTimeline(){
 }
 window.rmTL=(i)=>{ S.timeline.splice(i,1); renderTimeline(); };
 
-/* BMI */
+/* ===== BMI ===== */
 el("#calcBMI").addEventListener("click", ()=>{
   const h=+el("#hNow").value, w=+el("#wNow").value;
   if(!h||!w){ alert("Inserisci altezza e peso."); return; }
   const bmi=(w/Math.pow(h/100,2)).toFixed(1);
   const cls = bmi<18.5?"Sottopeso":bmi<25?"Normopeso":bmi<30?"Sovrappeso":"Obesità";
   el("#bmiNowOut").innerHTML=`BMI: <strong>${bmi}</strong> (${cls})`;
+  drawBMIChart();
 });
 el("#addPastBMI").addEventListener("click", ()=>{
   const d=el("#pastDate").value, h=+el("#pastH").value, w=+el("#pastW").value;
   if(!d||!h||!w){ alert("Compila data, altezza e peso."); return; }
   const bmi=+(w/Math.pow(h/100,2)).toFixed(1);
-  S.pastBMI.push({data:d,h,w,bmi}); renderPastBMI();
+  S.pastBMI.push({data:d,h,w,bmi}); renderPastBMI(); drawBMIChart();
   el("#pastDate").value=""; el("#pastH").value=""; el("#pastW").value="";
 });
 function renderPastBMI(){
@@ -565,9 +682,40 @@ function renderPastBMI(){
       <div class="mini">H: <strong>${p.h} cm</strong> • W: <strong>${p.w} kg</strong> • BMI: <strong>${p.bmi}</strong></div>
     </div>`).join('');
 }
-window.rmPBMI=(i)=>{ S.pastBMI.splice(i,1); renderPastBMI(); };
+window.rmPBMI=(i)=>{ S.pastBMI.splice(i,1); renderPastBMI(); drawBMIChart(); };
+function drawBMIChart(){
+  const c = el("#bmiChart"); if(!c) return;
+  const ctx = c.getContext("2d"); ctx.clearRect(0,0,c.width,c.height);
+  const data = S.pastBMI.slice().sort((a,b)=>new Date(a.data)-new Date(b.data));
+  const h=+el("#hNow").value||0, w=+el("#wNow").value||0;
+  if(h&&w) data.push({data:new Date().toISOString().slice(0,10), bmi:+(w/Math.pow(h/100,2)).toFixed(1)});
+  if(data.length<1){ return; }
+  const pad=30, W=c.clientWidth||c.width; c.width=W; const H=c.height;
+  const xs = data.map(d=>new Date(d.data).getTime());
+  const ys = data.map(d=>d.bmi);
+  const minX=Math.min(...xs), maxX=Math.max(...xs);
+  const minY=Math.min(...ys,18), maxY=Math.max(...ys,32);
+  function X(t){ return pad + (W-2*pad)*((t-minX)/(maxX-minX||1)); }
+  function Y(v){ return H-pad - (H-2*pad)*((v-minY)/(maxY-minY||1)); }
+  // axes
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted'); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  // range lines (normo 18.5-25)
+  ctx.setLineDash([4,4]); ctx.strokeStyle = '#22c55e';
+  ctx.beginPath(); ctx.moveTo(pad,Y(18.5)); ctx.lineTo(W-pad,Y(18.5)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,Y(25)); ctx.lineTo(W-pad,Y(25)); ctx.stroke();
+  ctx.setLineDash([]);
+  // line
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent'); ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(X(xs[0]), Y(ys[0]));
+  for(let i=1;i<data.length;i++){ ctx.lineTo(X(xs[i]), Y(ys[i])); }
+  ctx.stroke();
+  // points
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent2');
+  for(let i=0;i<data.length;i++){ ctx.beginPath(); ctx.arc(X(xs[i]),Y(ys[i]),3,0,Math.PI*2); ctx.fill(); }
+}
 
-/* Incidenti */
+/* ===== Incidenti ===== */
 el("#addInc").addEventListener("click", ()=>{
   const tipo=el("#incTipo").value, sev=el("#incSev").value, anno=el("#incAnno").value||null;
   const score=(INCIDENTS?.[tipo]?.[sev])||0;
@@ -588,7 +736,7 @@ function renderInc(){
 }
 window.rmInc=(i)=>{ S.incidents.splice(i,1); renderInc(); };
 
-/* Patologie */
+/* ===== Patologie ===== */
 el("#addDisease").addEventListener("click", ()=>{
   const part=el("#bodyPart").value, cat=el("#diseaseCat").value, det=el("#diseaseDetail").value;
   const score=DISEASES?.[part]?.[cat]?.[det]??0;
@@ -613,7 +761,7 @@ function renderDiseases(){
 }
 window.rmDis=(i)=>{ S.diseases.splice(i,1); renderDiseases(); };
 
-/* Droghe */
+/* ===== Droghe ===== */
 el("#drogheUso").addEventListener("change", e=>{
   const on = e.target.value==="si";
   el("#drogaTipo").disabled = !on;
@@ -640,112 +788,68 @@ function renderDrugs(){
 }
 window.rmDrug=(i)=>{ S.drugs.splice(i,1); renderDrugs(); };
 
-/* Step nav Fix per mobile footer overlap */
-function scrollTopPanel(){ document.querySelector(`.step-panel[data-step="${S.step}"]`)?.scrollIntoView({behavior:"smooth",block:"start"}); }
-["#nextBtn","#backBtn"].forEach(sel=>el(sel).addEventListener("click",scrollTopPanel));
-
 /* ===== Summary ===== */
 function buildSummary(){
   S.inferred = [];
   const cards = [];
-
-  // Anagrafica
   const nome = el("#nome").value?.trim()||"(senza nome)";
-  const dob = el("#dob").value;
-  const sesso = el("#sesso").value;
-  const res = el("#residenza").value;
-  const ambiente = el("#ambiente").value;
-  const trasfer = el("#trasferFuturo").value==="si";
-  const paeseF = el("#paeseFuturo").value;
-  const annoF = +el("#annoFuturo").value||null;
+  const dob = el("#dob").value; const sesso = el("#sesso").value;
+  const res = el("#residenza").value; const ambiente = el("#ambiente").value;
+  const trasfer = el("#trasferFuturo").value==="si"; const paeseF = el("#paeseFuturo").value; const annoF = +el("#annoFuturo").value||null;
   if(!dob){ S.inferred.push("Data di nascita non inserita: userò età 40 anni di default."); }
 
-  // Timeline
   const tl = S.timeline.slice().sort((a,b)=>a.dal-b.dal);
+  const sportG = +el("#sportGiorni").value||0, passi = +el("#passi").value||0, sonno = +el("#sonno").value||0;
+  const dieta = el("#dieta").value, idr = el("#idratazione").value, alcol = el("#alcol").value;
+  const fumoTab = el("#fumoTab").value, sigDie = +el("#sigDie").value||0, anniFumo = +el("#anniFumo").value||0;
+  const svapo = el("#svapo").value, svFreq = +el("#svapoFreq").value||0;
+  const lavoroTipo=el("#lavoroTipo").value, pasto=el("#pasto").value, reddito=el("#reddito").value;
+  const isF = sesso==="F"; const numParti=+el("#numParti").value||0; const tipoParto=el("#tipoParto").value; const compParto=el("#compParto").value;
+  const stress=+el("#stress").value||0; const stressTrig=Array.from(el("#stressTrig").selectedOptions).map(o=>o.value);
+  const hNow=+el("#hNow").value||0, wNow=+el("#wNow").value||0; const bmiNow = hNow&&wNow ? +(wNow/Math.pow(hNow/100,2)).toFixed(1) : null;
 
-  // Stile di vita
-  const sportG = +el("#sportGiorni").value||0;
-  const passi = +el("#passi").value||0;
-  const sonno = +el("#sonno").value||0;
-  const dieta = el("#dieta").value;
-  const idr = el("#idratazione").value;
-  const alcol = el("#alcol").value;
-  const fumoTab = el("#fumoTab").value;
-  const sigDie = +el("#sigDie").value||0;
-  const anniFumo = +el("#anniFumo").value||0;
-  const svapo = el("#svapo").value;
-  const svFreq = +el("#svapoFreq").value||0;
-
-  // Lavoro/Reddito/Pasti
-  const lavoroTipo = el("#lavoroTipo").value;
-  const pasto = el("#pasto").value;
-  const reddito = el("#reddito").value;
-
-  // Donna/parti
-  const isF = sesso==="F";
-  const numParti = +el("#numParti").value||0;
-  const tipoParto = el("#tipoParto").value;
-  const compParto = el("#compParto").value;
-
-  // Stress e droghe
-  const stress = +el("#stress").value||0;
-  const stressTrig = Array.from(el("#stressTrig").selectedOptions).map(o=>o.value);
-
-  // BMI
-  const hNow=+el("#hNow").value||0, wNow=+el("#wNow").value||0;
-  const bmiNow = hNow&&wNow ? +(wNow/Math.pow(hNow/100,2)).toFixed(1) : null;
-
-  /* Cards */
   cards.push(`
     <div class="card">
       <div class="mini"><strong>Anagrafica</strong></div>
       <ul class="list">
-        <li>Nome: <strong>${nome}</strong> • Data di nascita: <strong>${dob||"n/d"}</strong> • Sesso: <strong>${sesso}</strong></li>
+        <li>Nome: <strong>${nome}</strong> • Nascita: <strong>${dob||"n/d"}</strong> • Sesso: <strong>${sesso}</strong></li>
         <li>Residenza: <strong>${res}</strong> • Ambiente: <strong>${ambiente}</strong></li>
-        <li>Trasferimento futuro: <strong>${trasfer?("Sì → "+paeseF+" nel "+(annoF||"n/d")):"No"}</strong></li>
+        <li>Trasferimento futuro: <strong>${trasfer?("Sì → "+paeseF+" "+(annoF||"n/d")):"No"}</strong></li>
       </ul>
     </div>`);
-
   const tlRows = tl.map(t=>`<tr><td>${t.paese}</td><td>${t.dal}</td><td>${t.al}</td><td>${t.al - t.dal + 1}</td><td>${LIFE_EXP[t.paese]||"n/d"}</td></tr>`).join('');
   cards.push(`
     <div class="card">
       <div class="mini"><strong>Timeline Paesi</strong></div>
       <table class="table"><thead><tr><th>Paese</th><th>Dal</th><th>Al</th><th>Anni</th><th>LE</th></tr></thead><tbody>${tlRows||`<tr><td colspan="5" class="muted">Nessun periodo</td></tr>`}</tbody></table>
     </div>`);
-
   cards.push(`
     <div class="card">
       <div class="mini"><strong>Stile di vita</strong></div>
       <ul class="list">
-        <li>Sport: <strong>${sportG}</strong> gg/settimana • Passi: <strong>${passi}</strong>/die • Sonno: <strong>${sonno}</strong> h</li>
+        <li>Sport: <strong>${sportG}</strong>/set • Passi: <strong>${passi}</strong>/die • Sonno: <strong>${sonno}</strong> h</li>
         <li>Dieta: <strong>${dieta}</strong> • Idratazione: <strong>${idr}</strong> • Alcol: <strong>${alcol}</strong></li>
         <li>Fumo: <strong>${fumoTab}</strong> ${sigDie?`• ${sigDie} cig/die`:''} ${anniFumo?`• ${anniFumo} anni`:''} • Svapo: <strong>${svapo}</strong> ${svFreq?`(${svFreq}/g)`:''}</li>
         <li>BMI: <strong>${bmiNow??"n/d"}</strong></li>
       </ul>
-      ${S.pastBMI.length?`<div class="mini" style="margin-top:4px">BMI passati: ${S.pastBMI.map(p=>`${p.data}→${p.bmi}`).join(", ")}</div>`:""}
     </div>`);
-
   cards.push(`
     <div class="card">
       <div class="mini"><strong>Lavoro & Reddito</strong></div>
       <ul class="list">
-        <li>Lavoro: <strong>${lavoroTipo}</strong> • Pasti: <strong>${pasto}</strong></li>
-        <li>Reddito: <strong>${reddito}</strong></li>
+        <li>Lavoro: <strong>${lavoroTipo}</strong> • Pasti: <strong>${pasto}</strong> • Reddito: <strong>${reddito}</strong></li>
       </ul>
     </div>`);
-
   cards.push(`
     <div class="card">
       <div class="mini"><strong>Incidenti</strong></div>
       <div>${S.incidents.length? S.incidents.map(i=>`<span class="chip">${i.tipo} • ${i.sev}${i.anno?` • ${i.anno}`:''}</span>`).join(' ') : `<span class="muted">Nessuno</span>`}</div>
     </div>`);
-
   cards.push(`
     <div class="card">
       <div class="mini"><strong>Patologie</strong></div>
       <div>${S.diseases.length? S.diseases.map(d=>`<span class="chip">${d.part} • ${d.cat} • ${d.det}</span>`).join(' ') : `<span class="muted">Nessuna</span>`}</div>
     </div>`);
-
   cards.push(`
     <div class="card">
       <div class="mini"><strong>Stress & Droghe</strong></div>
@@ -754,7 +858,6 @@ function buildSummary(){
         <li>Droghe: ${S.drugs.length? S.drugs.map(d=>`<span class="chip">${d.tipo} • ${d.freq}</span>`).join(' ') : `<span class="muted">Nessun uso dichiarato</span>`}</li>
       </ul>
     </div>`);
-
   if(isF){
     cards.push(`
       <div class="card">
@@ -764,23 +867,13 @@ function buildSummary(){
         </ul>
       </div>`);
   }
-
   if(S.inferred.length){
     cards.push(`<div class="card"><div class="mini"><strong>Inferenze</strong></div><ul class="list">${S.inferred.map(x=>`<li>${x}</li>`).join('')}</ul></div>`);
   }
-
   el("#summaryCards").innerHTML = cards.join('');
 }
 
 /* ===== Calcolo ===== */
-function ageFromDOB(dateStr){
-  if(!dateStr) return 40;
-  const dob = new Date(dateStr), t=new Date();
-  let a = t.getFullYear()-dob.getFullYear();
-  const m=t.getMonth()-dob.getMonth();
-  if(m<0 || (m===0 && t.getDate()<dob.getDate())) a--;
-  return Math.max(0,a);
-}
 function baselineFromCountries(){
   let totalY=0,sum=0;
   S.timeline.forEach(t=>{ const y=(t.al-t.dal+1); const le=LIFE_EXP[t.paese]||78; sum+=le*y; totalY+=y; });
@@ -788,12 +881,10 @@ function baselineFromCountries(){
   return sum/totalY;
 }
 function envAdj(env){ return env==="mare"?0.6:env==="montagna"?0.4:env==="campagna"?0.3:0; }
-
 function lifestyleScoreYears(){
   const sportG=+el("#sportGiorni").value||0, passi=+el("#passi").value||0, sonno=+el("#sonno").value||0;
   const dieta=el("#dieta").value, idr=el("#idratazione").value, alcol=el("#alcol").value;
   const hNow=+el("#hNow").value||0, wNow=+el("#wNow").value||0;
-
   let pts=0;
   pts += Math.min(10, sportG*2);
   if(passi>=9000) pts+=8; else if(passi>=7000) pts+=5; else if(passi>=5000) pts+=2; else pts-=3;
@@ -806,7 +897,7 @@ function lifestyleScoreYears(){
     if(bmi<18.5) pts-=4; else if(bmi<25) pts+=6; else if(bmi<30) pts-=4; else pts-=10;
   }
   pts = Math.max(-30,Math.min(30,pts));
-  return pts*0.3; // conversione punti→anni
+  return pts*0.3;
 }
 function smokingYears(){
   const fumoTab=el("#fumoTab").value, sigDie=+el("#sigDie").value||0, anniFumo=+el("#anniFumo").value||0;
@@ -814,7 +905,7 @@ function smokingYears(){
   let y=0;
   if(fumoTab!=="no"){
     const packYears = (sigDie/20)*anniFumo;
-    y += -Math.min(12, packYears*0.5); // forte impatto cumulativo
+    y += -Math.min(12, packYears*0.5);
     if(fumoTab==="sigari"||fumoTab==="pipa") y += -1.5;
   }
   if(svapo!=="no"){
@@ -823,10 +914,7 @@ function smokingYears(){
   }
   return y;
 }
-function workYears(){
-  const job=JOBS[el("#lavoroTipo").value]; if(!job) return 0;
-  return job.years||0;
-}
+function workYears(){ const job=JOBS[el("#lavoroTipo").value]; return job? (job.years||0):0; }
 function incomeYears(){
   const r=el("#reddito").value;
   if(r==="basso") return -1.0;
@@ -837,56 +925,32 @@ function incomeYears(){
   return 0;
 }
 function mealYears(){ return el("#pasto").value==="fretta" ? -0.3 : 0.2; }
-function diseaseYears(){
-  const sum=S.diseases.reduce((a,d)=>a+(d.score||0),0);
-  return Math.max(-70,sum)*0.6; // come v1
-}
-function incidentsYears(){
-  const sum=S.incidents.reduce((a,i)=>a+(i.score||0),0);
-  return Math.max(-35,sum)*0.5;
-}
-function drugsYears(){
-  const sum=S.drugs.reduce((a,d)=>a+(d.score||0),0);
-  return Math.max(-40,sum)*0.6;
-}
+function diseaseYears(){ const sum=S.diseases.reduce((a,d)=>a+(d.score||0),0); return Math.max(-70,sum)*0.6; }
+function incidentsYears(){ const sum=S.incidents.reduce((a,i)=>a+(i.score||0),0); return Math.max(-35,sum)*0.5; }
+function drugsYears(){ const sum=S.drugs.reduce((a,d)=>a+(d.score||0),0); return Math.max(-40,sum)*0.6; }
 function femaleBirthYears(){
   if(el("#sesso").value!=="F") return 0;
   const n=+el("#numParti").value||0, tipo=el("#tipoParto").value, comp=el("#compParto").value;
   let y = 0;
   if(n>0){
-    // effetti medio-piccoli (stile letteratura mista)
-    y += Math.min(1.0, n*0.15); // parità lieve protezione
+    y += Math.min(1.0, n*0.15);
     if(tipo==="cesareo") y -= Math.min(0.8, n*0.1);
     if(comp==="lievi") y -= 0.2;
     if(comp==="gravi") y -= 1.0;
   }
   return y;
 }
-function stressYears(){
-  const s=+el("#stress").value||0;
-  let y = -(s*0.15); // fino a -1.5 anni circa
-  return y;
-}
+function stressYears(){ const s=+el("#stress").value||0; return -(s*0.15); }
 function futureAdj(){
   if(el("#trasferFuturo").value!=="si") return 0;
   const paese = el("#paeseFuturo").value;
   const target = LIFE_EXP[paese] || 78;
   const base = baselineFromCountries();
   const delta = target - base;
-  return delta * 0.2; // incertezza
+  return delta * 0.2;
 }
-function sexYears(){
-  const sx=el("#sesso").value;
-  if(sx==="F") return +1.8;
-  if(sx==="M") return 0;
-  return +0.5;
-}
-function cohortYears(){
-  const a=ageFromDOB(el("#dob").value);
-  if(a<40) return 1.5;
-  if(a<=60) return 0.6;
-  return 0.2;
-}
+function sexYears(){ const sx=el("#sesso").value; if(sx==="F") return +1.8; if(sx==="M") return 0; return +0.5; }
+function cohortYears(){ const a=ageFromDOB(el("#dob").value); if(a<40) return 1.5; if(a<=60) return 0.6; return 0.2; }
 
 function computeExpectedAge(){
   const base=baselineFromCountries();
@@ -908,17 +972,14 @@ function computeExpectedAge(){
   let expected = base + env + life + smoke + job + income + meal + dis + inc + drug + fem + stress + fut + sex + coh;
   expected = Math.max(50, Math.min(108, expected));
 
-  // Health index: combina (in punti) per un range -100..+100
   const health = Math.max(-100, Math.min(100,
     (life/0.3)*2 + (dis/0.6)*1.2 + (inc/0.5)*0.8 + (smoke)*3 + (drug/0.6)*1.2 - (stress*8) + (income*10)
   ));
-
   return {expected, health, comp:{base,env,life,smoke,job,income,meal,dis,inc,drug,fem,stress,fut,sex,coh}};
 }
 
 function milestoneProbs(expected, currentAge){
-  const spread = 9;
-  const ages=[70,80,90,100,110]; const probs={};
+  const spread = 9; const ages=[70,80,90,100,110]; const probs={};
   ages.forEach(a=>{ const p=1/(1+Math.exp((a-expected)/spread)); probs[a]=currentAge>=a?1:p; });
   return probs;
 }
@@ -929,14 +990,21 @@ function compute(){
   const name = el("#nome").value?.trim()||"Tu";
   const age = ageFromDOB(el("#dob").value);
   const today=new Date();
-  const yrs = Math.max(0, expected - age);
-  const date = new Date(today.getFullYear()+Math.round(yrs), today.getMonth(), today.getDate());
+  const yrs = expected - age;
+  const date = new Date(today.getFullYear()+Math.round(Math.max(0,yrs)), today.getMonth(), today.getDate());
 
-  // Render
-  el("#resultHead").textContent = `${name}, stima ludica: ${expected.toFixed(1)} anni`;
+  // Frase simpatica se expected < age
+  let extraDaysMsg = "";
+  if(expected < age){
+    const extraYears = age - expected;
+    const extraDays = Math.round(extraYears * 365.25);
+    extraDaysMsg = ` — 👏 Hai già vissuto <strong>${extraDays}</strong> giorni in più rispetto alla media prevista!`;
+  }
+
+  el("#resultHead").innerHTML = `${name}, stima ludica: ${expected.toFixed(1)} anni${extraDaysMsg}`;
   el("#etaStimata").textContent = `${expected.toFixed(1)} anni`;
   el("#saluteScore").textContent = `${Math.round(health)}`;
-  el("#resultDate").innerHTML = `Data indicativa (non reale): <strong>${date.toLocaleDateString("it-IT")}</strong> — anni residui ~ <strong>${yrs.toFixed(1)}</strong>`;
+  el("#resultDate").innerHTML = `Data indicativa (non reale): <strong>${date.toLocaleDateString("it-IT")}</strong> — anni residui ~ <strong>${Math.max(0,yrs).toFixed(1)}</strong>`;
 
   const probs = milestoneProbs(expected, age);
   el("#milestones").innerHTML = [70,80,90,100,110].map(a=>{
@@ -962,34 +1030,178 @@ function compute(){
   if(comp.coh) drivers.push(`Coorte/progresso: +${comp.coh.toFixed(1)} anni`);
   el("#drivers").innerHTML = drivers.map(d=>`<li>${d}</li>`).join('');
 
-  // Consigli (semplici euristiche)
-  const tips=[];
-  const passi=+el("#passi").value||0; if(passi<7000) tips.push("Porta gradualmente i passi a 7–9k/die (salute cardio-metabolica).");
-  const sonno=+el("#sonno").value||0; if(sonno<7||sonno>9) tips.push("Punta a 7–9 ore di sonno costanti (igiene del sonno).");
-  const idr=el("#idratazione").value; if(idr!=="acqua") tips.push("Riduci le bevande zuccherate: sostituiscile con acqua/infusi.");
-  const alcol=el("#alcol").value; if(alcol!=="no") tips.push("Contieni l’alcol entro linee guida o valuta settimane ‘dry’.");
-  const fumoTab=el("#fumoTab").value; if(fumoTab!=="no") tips.push("Percorso di cessazione dal tabacco (supporto medico/app/terapia).");
-  const svapo=el("#svapo").value; if(svapo!=="no") tips.push("Se svapi: riduci frequenza e nicotina fino a stop.");
-  const bmiH=+el("#hNow").value||0, bmiW=+el("#wNow").value||0;
-  if(bmiH&&bmiW){ const bmi=bmiW/Math.pow(bmiH/100,2); if(bmi>=25) tips.push("Deficit calorico lieve, +proteine, +movimento per riportare il BMI in 20–25."); }
-  const job = JOBS[el("#lavoroTipo").value]; if(job?.expo?.dust||job?.expo?.silica) tips.push("Usa DPI certificati (FFP3 per polveri/silice) e monitoraggi periodici.");
-  if(job?.expo?.chem) tips.push("Ventilazione/aspirazione localizzata e DPI per solventi/vernici.");
-  if(job?.expo?.night) tips.push("Turni: cura l’igiene circadiana (luce diurna, blocco blu la sera).");
-  const stressV=+el("#stress").value||0; if(stressV>=5) tips.push("Protocollo anti-stress: 10’ respiro 4-6, 20’ passeggiata, journaling serale.");
+  // Consigli
+  const tips=[]; const passi=+el("#passi").value||0; if(passi<7000) tips.push("Porta gradualmente i passi a 7–9k/die.");
+  const sonno=+el("#sonno").value||0; if(sonno<7||sonno>9) tips.push("Punta a 7–9 ore di sonno regolari.");
+  const idr=el("#idratazione").value; if(idr!=="acqua") tips.push("Riduci le bevande zuccherate a favore di acqua/infusi.");
+  const alcol=el("#alcol").value; if(alcol!=="no") tips.push("Contieni l’alcol (o periodi ‘dry’).");
+  const fumoTab=el("#fumoTab").value; if(fumoTab!=="no") tips.push("Avvia un percorso per smettere di fumare (supporto medico/app).");
+  const svapo=el("#svapo").value; if(svapo!=="no") tips.push("Riduci frequenza e nicotina fino a stop.");
+  const h=+el("#hNow").value||0, w=+el("#wNow").value||0; if(h&&w){ const bmi=w/Math.pow(h/100,2); if(bmi>=25) tips.push("Deficit calorico leggero e più movimento per riportare il BMI tra 20–25."); }
+  const job = JOBS[el("#lavoroTipo").value]; if(job?.expo?.dust||job?.expo?.silica) tips.push("Usa DPI (FFP3) e monitoraggi periodici per polveri/silice.");
+  if(job?.expo?.chem) tips.push("Ventilazione/aspirazione e DPI per solventi/vernici.");
+  if(job?.expo?.night) tips.push("Igiene circadiana per i turni (luce diurna, blocco blu la sera).");
+  const stressV=+el("#stress").value||0; if(stressV>=5) tips.push("Protocollo anti-stress: 10’ respiro 4-6, 20’ camminata, journaling serale.");
   if(S.drugs.length) tips.push("Se usi sostanze: valuta un consulto riservato per riduzione del danno.");
-  if(tips.length===0) tips.push("Ottimo profilo! Mantieni le abitudini e controlli periodici di prevenzione.");
+  if(tips.length===0) tips.push("Ottimo profilo! Mantieni le abitudini e prevenzione periodica.");
   el("#tips").innerHTML = tips.map(t=>`<li>${t}</li>`).join('');
+
+  // Stima anni guadagnabili (best-case modificabile)
+  const ideal = simulateIdealExpected();
+  const gain = Math.max(0, ideal - expected);
+  el("#potentialGain").innerHTML = `<strong>Potenziale miglioramento:</strong> applicando i consigli potresti guadagnare fino a <strong>+${gain.toFixed(1)} anni</strong> (stima).`;
 
   showStep(8);
 }
 
-/* Hook calcolo e ricomincia */
+/* Best-case: simula abitudini ottimali (non tocca malattie/incidenti passati) */
+function simulateIdealExpected(){
+  // Salva valori correnti
+  const backup = {
+    sport:+el("#sportGiorni").value, passi:+el("#passi").value, sonno:+el("#sonno").value,
+    dieta:el("#dieta").value, idr:el("#idratazione").value, alcol:el("#alcol").value,
+    fumo:el("#fumoTab").value, sigDie:+el("#sigDie").value, anniF:+el("#anniFumo").value,
+    svapo:el("#svapo").value, svFreq:+el("#svapoFreq").value,
+    pasto:el("#pasto").value, reddito:el("#reddito").value, lavoro:el("#lavoroTipo").value,
+    stress:+el("#stress").value
+  };
+  // Set ideali raggiungibili
+  el("#sportGiorni").value=4;
+  el("#passi").value=9000;
+  el("#sonno").value=8;
+  el("#dieta").value="sana";
+  el("#idratazione").value="acqua";
+  el("#alcol").value="no";
+  el("#fumoTab").value="no"; el("#sigDie").value=0; el("#anniFumo").value=0;
+  el("#svapo").value="no"; el("#svapoFreq").value=0;
+  el("#pasto").value="calma";
+  // Reddito: se basso → miglioramento (proxy)
+  if(backup.reddito==="basso"||backup.reddito==="medio-basso") el("#reddito").value="medio";
+  // Lavoro: non lo cambiamo, ma l'ideale riduce impatti non modificabili (lasciamo invariato)
+  // Stress: abbassiamo
+  el("#stress").value = Math.max(2, backup.stress-3);
+  // BMI: non lo forziamo qui (già incluso via dieta/sport/sonno); se vuoi, potresti simulare BMI 22.5 riducendo peso.
+
+  const {expected} = computeExpectedAge();
+
+  // Ripristina
+  el("#sportGiorni").value=backup.sport; el("#passi").value=backup.passi; el("#sonno").value=backup.sonno;
+  el("#dieta").value=backup.dieta; el("#idratazione").value=backup.idr; el("#alcol").value=backup.alcol;
+  el("#fumoTab").value=backup.fumo; el("#sigDie").value=backup.sigDie; el("#anniFumo").value=backup.anniF;
+  el("#svapo").value=backup.svapo; el("#svapoFreq").value=backup.svFreq;
+  el("#pasto").value=backup.pasto; el("#reddito").value=backup.reddito; el("#lavoroTipo").value=backup.lavoro;
+  el("#stress").value=backup.stress;
+  return expected;
+}
+
+/* ===== Report export (stampa/HTML) ===== */
+document.getElementById("exportReport").addEventListener("click", ()=>{
+  const reportHTML = generateReportHTML();
+  const w=window.open(""); w.document.write(reportHTML); w.document.close();
+  setTimeout(()=>w.print(), 300);
+});
+function generateReportHTML(){
+  const name = el("#nome").value?.trim()||"Tu";
+  return `
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Report longevità</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;padding:20px;color:#111}
+  h1{margin:0 0 6px;font-size:22px} h2{margin:18px 0 6px;font-size:18px}
+  table{width:100%;border-collapse:collapse;margin:8px 0} th,td{border:1px solid #ddd;padding:6px;text-align:left}
+  .muted{color:#555} .pill{display:inline-block;border:1px solid #ddd;border-radius:999px;padding:2px 8px;margin:2px;font-size:12px}
+  .kpi{display:inline-block;min-width:200px;border:1px solid #ddd;padding:10px;border-radius:10px;margin:4px 8px 4px 0}
+  @media print{.noprint{display:none}}
+</style></head><body>
+<h1>Report longevità — ${name}</h1>
+<div class="muted">Generato: ${new Date().toLocaleString("it-IT")}</div>
+
+<h2>Risultato</h2>
+<div>${el("#resultHead").innerHTML}</div>
+<div class="kpi"><strong>Età stimata</strong><div>${el("#etaStimata").textContent}</div></div>
+<div class="kpi"><strong>Indice salute</strong><div>${el("#saluteScore").textContent}</div></div>
+<div style="margin:8px 0">${el("#resultDate").innerHTML}</div>
+
+<h2>Probabilità traguardi</h2>
+<table>${el("#milestones").parentElement.parentElement.innerHTML}</table>
+
+<h2>Fattori principali</h2>
+<ul>${el("#drivers").innerHTML}</ul>
+
+<h2>Consigli</h2>
+<ul>${el("#tips").innerHTML}</ul>
+<div>${el("#potentialGain").innerHTML}</div>
+
+<h2>Dati inseriti (riepilogo)</h2>
+<div>${el("#summaryCards").innerHTML}</div>
+
+<hr>
+<div class="muted">Creata da <strong>Stephan Winckler</strong> per divertimento. Non è un consiglio medico.</div>
+</body></html>`;
+}
+
+/* ===== Export/Import JSON ===== */
+document.getElementById("exportJSON").addEventListener("click", ()=>{
+  const data = collectAllData();
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='longevita_data.json'; a.click(); URL.revokeObjectURL(url);
+});
+document.getElementById("importJSON").addEventListener("change", async (e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const text=await file.text(); const data=JSON.parse(text);
+  applyAllData(data);
+  alert("Dati importati.");
+});
+function collectAllData(){
+  return {
+    nome:el("#nome").value, dob:el("#dob").value, sesso:el("#sesso").value,
+    residenza:el("#residenza").value, ambiente:el("#ambiente").value,
+    trasferFuturo:el("#trasferFuturo").value, paeseFuturo:el("#paeseFuturo").value, annoFuturo:el("#annoFuturo").value,
+    timeline:S.timeline, sportGiorni:el("#sportGiorni").value, passi:el("#passi").value, sonno:el("#sonno").value,
+    dieta:el("#dieta").value, idratazione:el("#idratazione").value, alcol:el("#alcol").value,
+    fumoTab:el("#fumoTab").value, sigDie:el("#sigDie").value, anniFumo:el("#anniFumo").value,
+    svapo:el("#svapo").value, svapoFreq:el("#svapoFreq").value,
+    hNow:el("#hNow").value, wNow:el("#wNow").value, pastBMI:S.pastBMI,
+    lavoroTipo:el("#lavoroTipo").value, pasto:el("#pasto").value, reddito:el("#reddito").value,
+    incidents:S.incidents, diseases:S.diseases,
+    numParti:el("#numParti").value, tipoParto:el("#tipoParto").value, compParto:el("#compParto").value,
+    stress:el("#stress").value, stressTrig:Array.from(el("#stressTrig").selectedOptions).map(o=>o.value),
+    drugs:S.drugs
+  };
+}
+function applyAllData(d){
+  el("#nome").value=d.nome||""; el("#dob").value=d.dob||""; el("#sesso").value=d.sesso||"nd";
+  el("#residenza").value=d.residenza||COUNTRIES[0]; el("#ambiente").value=d.ambiente||"citta";
+  el("#trasferFuturo").value=d.trasferFuturo||"no"; el("#paeseFuturo").value=d.paeseFuturo||COUNTRIES[0]; el("#annoFuturo").value=d.annoFuturo||"";
+  S.timeline=d.timeline||[]; renderTimeline();
+  el("#sportGiorni").value=d.sportGiorni||0; el("#passi").value=d.passi||0; el("#sonno").value=d.sonno||0;
+  el("#dieta").value=d.dieta||"mista"; el("#idratazione").value=d.idratazione||"mista"; el("#alcol").value=d.alcol||"moderato";
+  el("#fumoTab").value=d.fumoTab||"no"; el("#sigDie").value=d.sigDie||0; el("#anniFumo").value=d.anniFumo||0;
+  el("#svapo").value=d.svapo||"no"; el("#svapoFreq").value=d.svapoFreq||0;
+  el("#hNow").value=d.hNow||""; el("#wNow").value=d.wNow||""; S.pastBMI=d.pastBMI||[]; renderPastBMI(); drawBMIChart();
+  el("#lavoroTipo").value=d.lavoroTipo||Object.keys(JOBS)[0]; el("#pasto").value=d.pasto||"calma"; el("#reddito").value=d.reddito||"medio";
+  S.incidents=d.incidents||[]; renderInc(); S.diseases=d.diseases||[]; renderDiseases();
+  el("#numParti").value=d.numParti||0; el("#tipoParto").value=d.tipoParto||"nessuno"; el("#compParto").value=d.compParto||"no";
+  el("#stress").value=d.stress||0;
+  Array.from(el("#stressTrig").options).forEach(opt=>{ opt.selected = (d.stressTrig||[]).includes(opt.value); });
+  S.drugs=d.drugs||[]; renderDrugs();
+}
+
+/* ===== Nav + footer year ===== */
+function renderSteps(){ const pct=((S.step-1)/(8-1))*100; el("#bar").style.width=pct+"%"; }
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* ===== Hook calcolo e ricomincia ===== */
 el("#doCalc").addEventListener("click", compute);
 el("#ricomincia").addEventListener("click", ()=>location.reload());
 
-/* Stepper iniziale */
-showStep(1);
-document.getElementById("year").textContent = new Date().getFullYear();
+/* ===== Start ===== */
+initDiseaseSelectors(); initIncidents(); initDrugs();
+renderSteps(); showStep(1);
+
+/* ===== Fill country selects (after DOM ready) ===== */
+function fillCountrySelect(id){ const s=el("#"+id); s.innerHTML=COUNTRIES.map(c=>`<option>${c}</option>`).join(''); }
+["residenza","paeseFuturo","paeseTimeline"].forEach(fillCountrySelect);
 </script>
 </body>
 </html>
